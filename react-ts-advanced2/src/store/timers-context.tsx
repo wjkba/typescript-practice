@@ -12,8 +12,8 @@ type TimersState = {
 
 const initialState: TimersState = {
   isRunning: true,
-  timers: []
-}
+  timers: [],
+};
 
 type TimersContextValue = TimersState & {
   addTimer: (timerData: Timer) => void;
@@ -21,7 +21,7 @@ type TimersContextValue = TimersState & {
   stopTimers: () => void;
 };
 
-// tworzy context object, ktory potrzebny do zarzadzania danych w aplikacji
+// tworzy context object, ktory potrzebny jest do zarzadzania danych w aplikacji
 // generic <TimersContextValue> okresla strukture danych ktore beda przechowywane w context
 export const TimersContext = createContext<TimersContextValue | null>(null);
 
@@ -38,73 +38,59 @@ type TimersContextProviderProps = {
 };
 
 type StartTimersAction = {
-  type: "START_TIMERS"
-}
+  type: "START_TIMERS";
+};
 type StopTimersAction = {
-  type: "STOP_TIMERS"
-}
+  type: "STOP_TIMERS";
+};
 type AddTimerAction = {
-  type: "ADD_TIMER",
-  payload: Timer,
-}
+  type: "ADD_TIMER";
+  payload: Timer;
+};
 
-type Action = StartTimersAction | StopTimersAction | AddTimerAction
+type Action = StartTimersAction | StopTimersAction | AddTimerAction;
 
-function timersReducer(state: TimersState, action: Action): TimersState { // koncowy wynik funkcji ma byc TimersState, tak samo jak stan poczatkowy
-  if(action.type === "START_TIMERS"){
-    return {
-      ...state,
-       isRunning: true
-    }
+function timersReducer(state: TimersState, action: Action): TimersState {
+  // koncowy wynik funkcji ma byc TimersState, tak samo jak stan poczatkowy
+  switch (action.type) {
+    case "START_TIMERS":
+      return { ...state, isRunning: true };
+    case "STOP_TIMERS":
+      return { ...state, isRunning: false };
+    case "ADD_TIMER":
+      return {
+        ...state,
+        timers: [...state.timers, action.payload],
+      };
+    default:
+      console.warn(`Unhandled action type`);
+      return state;
   }
-  if(action.type === "STOP_TIMERS"){
-    return{
-      ...state,
-      isRunning: false
-    }
-  }
-  if(action.type === "ADD_TIMER"){
-    return{
-      ...state,
-      timers:[
-        ...state.timers,
-        {
-          name: action.payload.name,
-          duration: action.payload.duration
-        }
-      ]
-    }
-  }
-
-  return state
 }
 
 // Provider umozliwia korzystanie z context, bedzie wrapowal componenty
 export default function TimersContextProvider({
   children,
 }: TimersContextProviderProps) {
-  
   // ===== REDUCER =====
-  
-  // timersState to aktualny stan timerow, 
+
+  // timersState to aktualny stan timerow,
   // dispatch wysyla wiadomosci do reducer zeby aktualizowac timersState
   // reducer okresla jak stan timersState zmienia sie w odpowiedzi na rozne akcje
   // initialState to poczatkowy stan timersState
-  const [timersState, dispatch] = useReducer(timersReducer, initialState)
-
-
+  const [timersState, dispatch] = useReducer(timersReducer, initialState);
 
   const ctx: TimersContextValue = {
     timers: timersState.timers,
     isRunning: timersState.isRunning,
     addTimer(timerData) {
-      dispatch({type:"ADD_TIMER", payload: timerData})
+      dispatch({ type: "ADD_TIMER", payload: timerData });
     },
     startTimers() {
-      dispatch({type:"START_TIMERS"})
+      dispatch({ type: "START_TIMERS" });
     },
     stopTimers() {
-      dispatch({type:"STOP_TIMERS"})
+      dispatch({ type: "STOP_TIMERS" });
     },
   };
   return (

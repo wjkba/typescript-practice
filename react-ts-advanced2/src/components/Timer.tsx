@@ -1,11 +1,42 @@
 import Container from "./UI/Container.tsx";
-import { type Timer as TimerProps } from "../store/timers-context.tsx";
+import {
+  useTimersContext,
+  type Timer as TimerProps,
+} from "../store/timers-context.tsx";
+import { useEffect, useState, useRef } from "react";
 
 export default function Timer({ name, duration }: TimerProps) {
+  const interval = useRef<number | null>(null); // refy nie beda tworzone ponownie kiedy funkcja componentu znowu sie uruchomi
+  const [remainingTime, setRemainingTime] = useState(duration * 1000);
+  const { isRunning } = useTimersContext();
+
+  if (remainingTime <= 0 && interval.current) {
+    clearInterval(interval.current);
+  }
+
+  useEffect(() => {
+    let timer: number;
+    if (isRunning) {
+      timer = setInterval(function () {
+        setRemainingTime((prevTime) => prevTime - 50);
+      }, 50);
+      interval.current = timer;
+    } else if (interval.current) {
+      clearInterval(interval.current);
+    }
+
+    return () => clearInterval(timer); // jesli cos zwracamy w useEffectie to jest to funkcja cleanup
+  }, [isRunning]); // pusty bracket zapewnia ze funkcja uruchomi sie raz, nie za kazdym odswizeniem komponentu
+
+  const formattedRemainingTime = (remainingTime / 1000).toFixed(2);
+
   return (
     <Container as="article">
       <h2>{name}</h2>
-      <p>{duration}</p>
+      <p>
+        <progress max={duration * 1000} value={remainingTime} />
+      </p>
+      <p>{formattedRemainingTime}</p>
     </Container>
   );
 }
