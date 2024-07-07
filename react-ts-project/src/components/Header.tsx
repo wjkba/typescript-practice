@@ -1,21 +1,19 @@
-import { useState } from "react";
+import { useRef } from "react";
 import Button from "./Button";
-import Modal from "./Modal";
+import Modal, { ModalRef } from "./Modal";
 
 export default function Header() {
-  const [modalIsVisible, setModalIsVisible] = useState(false);
+  const modalRef = useRef<ModalRef>(null);
 
   function handleOpenModal() {
-    setModalIsVisible(true);
+    modalRef.current?.openModal();
   }
 
-  function handleCloseModal() {
-    setModalIsVisible(false);
-  }
+  function handleCloseModal() {}
 
   return (
     <>
-      {modalIsVisible && <Modal onClose={handleCloseModal} />}
+      <Modal ref={modalRef}>TEST</Modal>
       <div id="main-header">
         <h1>ReactMentoring</h1>
         <nav>
