@@ -1,4 +1,5 @@
-import { SESSIONS } from '../dummy-sessions.ts'; // normally, we would probably load that from a server
+import { SESSIONS } from "../dummy-sessions.ts"; // normally, we would probably load that from a server
+import SessionArticle from "../components/SessionArticle.tsx";
 
 export default function SessionsPage() {
   return (
@@ -11,7 +12,13 @@ export default function SessionsPage() {
           you!
         </p>
       </header>
-      {/* Todo: Output list of sessions */}
+      <ul id="sessions-list">
+        {SESSIONS.map((item) => (
+          <li key={item.id}>
+            <SessionArticle session={item} />
+          </li>
+        ))}
+      </ul>
     </main>
   );
 }
