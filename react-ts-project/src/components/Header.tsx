@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import Button from "./Button";
 import Modal, { ModalRef } from "./Modal";
+import UpcomingSessions from "./UpcomingSessions";
 
 export default function Header() {
   const modalRef = useRef<ModalRef>(null);
@@ -9,11 +10,15 @@ export default function Header() {
     modalRef.current?.openModal();
   }
 
-  function handleCloseModal() {}
+  function handleCloseModal() {
+    modalRef.current?.closeModal();
+  }
 
   return (
     <>
-      <Modal ref={modalRef}>TEST</Modal>
+      <Modal ref={modalRef}>
+        <UpcomingSessions onClose={handleCloseModal} />
+      </Modal>
       <div id="main-header">
         <h1>ReactMentoring</h1>
         <nav>
