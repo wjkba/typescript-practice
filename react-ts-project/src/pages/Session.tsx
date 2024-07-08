@@ -19,10 +19,21 @@ export default function SessionPage() {
     );
   }
 
+  const bookingInfo = {
+    id: loadedSession?.id,
+    title: loadedSession?.title,
+    summary: loadedSession?.summary,
+    date: loadedSession?.date,
+  };
+
   return (
     <>
       {isBooking && (
-        <BookSession isBooking={isBooking} setIsBooking={setIsBooking} />
+        <BookSession
+          isBooking={isBooking}
+          setIsBooking={setIsBooking}
+          bookingInfo={bookingInfo}
+        />
       )}
       <main id="session-page">
         <article>
